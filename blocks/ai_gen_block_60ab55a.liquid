@@ -1,0 +1,529 @@
+{% doc %}
+  @prompt
+    Create a complete contact section with the following structure:
+    
+    Title: "Get in Touch"
+    
+    Intro paragraph: "At ATAH, we believe in the power of connection. Whether you’re a customer with questions, a potential partner eager to collaborate, or a member of the media, we are excited to hear from you. Your story matters, and we value the opportunity to connect, share, and grow together."
+    
+    Three contact cards displayed side by side:
+    1. General Inquiries - "For questions or more information about ATAH, our collections, or any general inquiries:" - hello@atah.com
+    2. Partnerships - "Interested in collaborating or discussing partnerships with ATAH? Reach us here:" - partners@atah.com
+    3. Media & Press - "For press inquiries or media kits, please contact us:" - press@atah.com
+    
+    Contact form with heading "We’re here to listen. Please fill out the form below to get in touch with us." Include fields for Name, Email, and Message with a submit button.
+    
+    Privacy disclaimer at bottom: "We respect your privacy. Any information shared with us will be treated with the utmost care and in accordance with our privacy policy. Your details will not be shared with third parties without your consent."
+    
+    Make all text editable with clean, minimal styling that works well on mobile and desktop., please delete the form keep al the 3 cards on one line, hell me have the option for full page and fill, alignment as well
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-contact-section-{{ ai_gen_id }} {
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+    {% if block.settings.section_width == 'full' %}
+      max-width: 100%;
+    {% else %}
+      max-width: 1200px;
+      margin: 0 auto;
+    {% endif %}
+  }
+
+  .ai-contact-header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.header_alignment }};
+    margin-bottom: 48px;
+  }
+
+  .ai-contact-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .ai-contact-intro-{{ ai_gen_id }} {
+    font-size: {{ block.settings.intro_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.6;
+    {% if block.settings.header_alignment == 'center' %}
+      max-width: 800px;
+      margin: 0 auto;
+    {% elsif block.settings.header_alignment == 'right' %}
+      max-width: 800px;
+      margin-left: auto;
+    {% else %}
+      max-width: 800px;
+    {% endif %}
+    opacity: 0.9;
+  }
+
+  .ai-contact-cards-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .ai-contact-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 32px 24px;
+    text-align: {{ block.settings.card_alignment }};
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-contact-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-contact-card-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_title_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .ai-contact-card-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_text_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.5;
+    margin: 0 0 16px;
+    opacity: 0.8;
+  }
+
+  .ai-contact-card-email-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_text_size }}px;
+    color: {{ block.settings.email_color }};
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-block;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-contact-card-email-{{ ai_gen_id }}:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+  }
+
+  .ai-contact-privacy-{{ ai_gen_id }} {
+    font-size: {{ block.settings.privacy_text_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.6;
+    text-align: {{ block.settings.privacy_alignment }};
+    {% if block.settings.privacy_alignment == 'center' %}
+      max-width: 800px;
+      margin: 0 auto;
+    {% elsif block.settings.privacy_alignment == 'right' %}
+      max-width: 800px;
+      margin-left: auto;
+    {% else %}
+      max-width: 800px;
+    {% endif %}
+    opacity: 0.7;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-contact-section-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_top | times: 0.6 }}px 16px {{ block.settings.section_padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-contact-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.7 }}px;
+    }
+
+    .ai-contact-intro-{{ ai_gen_id }} {
+      font-size: {{ block.settings.intro_size | times: 0.9 }}px;
+    }
+
+    .ai-contact-cards-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .ai-contact-card-{{ ai_gen_id }} {
+      padding: 24px 20px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-contact-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-contact-header-{{ ai_gen_id }}">
+    {% if block.settings.title != blank %}
+      <h2 class="ai-contact-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+    {% endif %}
+    {% if block.settings.intro_text != blank %}
+      <div class="ai-contact-intro-{{ ai_gen_id }}">{{ block.settings.intro_text }}</div>
+    {% endif %}
+  </div>
+
+  <div class="ai-contact-cards-{{ ai_gen_id }}">
+    <div class="ai-contact-card-{{ ai_gen_id }}">
+      {% if block.settings.card_1_title != blank %}
+        <h3 class="ai-contact-card-title-{{ ai_gen_id }}">{{ block.settings.card_1_title }}</h3>
+      {% endif %}
+      {% if block.settings.card_1_description != blank %}
+        <p class="ai-contact-card-description-{{ ai_gen_id }}">{{ block.settings.card_1_description }}</p>
+      {% endif %}
+      {% if block.settings.card_1_email != blank %}
+        <a href="mailto:{{ block.settings.card_1_email }}" class="ai-contact-card-email-{{ ai_gen_id }}">
+          {{ block.settings.card_1_email }}
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="ai-contact-card-{{ ai_gen_id }}">
+      {% if block.settings.card_2_title != blank %}
+        <h3 class="ai-contact-card-title-{{ ai_gen_id }}">{{ block.settings.card_2_title }}</h3>
+      {% endif %}
+      {% if block.settings.card_2_description != blank %}
+        <p class="ai-contact-card-description-{{ ai_gen_id }}">{{ block.settings.card_2_description }}</p>
+      {% endif %}
+      {% if block.settings.card_2_email != blank %}
+        <a href="mailto:{{ block.settings.card_2_email }}" class="ai-contact-card-email-{{ ai_gen_id }}">
+          {{ block.settings.card_2_email }}
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="ai-contact-card-{{ ai_gen_id }}">
+      {% if block.settings.card_3_title != blank %}
+        <h3 class="ai-contact-card-title-{{ ai_gen_id }}">{{ block.settings.card_3_title }}</h3>
+      {% endif %}
+      {% if block.settings.card_3_description != blank %}
+        <p class="ai-contact-card-description-{{ ai_gen_id }}">{{ block.settings.card_3_description }}</p>
+      {% endif %}
+      {% if block.settings.card_3_email != blank %}
+        <a href="mailto:{{ block.settings.card_3_email }}" class="ai-contact-card-email-{{ ai_gen_id }}">
+          {{ block.settings.card_3_email }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if block.settings.privacy_text != blank %}
+    <div class="ai-contact-privacy-{{ ai_gen_id }}">
+      {{ block.settings.privacy_text }}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Contact section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        {
+          "value": "page",
+          "label": "Page width"
+        },
+        {
+          "value": "full",
+          "label": "Full width"
+        }
+      ],
+      "default": "page"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 48
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Introduction text",
+      "default": "At ATAH, we believe in the power of connection. Whether you're a customer with questions, a potential partner eager to collaborate, or a member of the media, we are excited to hear from you. Your story matters, and we value the opportunity to connect, share, and grow together."
+    },
+    {
+      "type": "range",
+      "id": "intro_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Introduction text size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Contact card 1"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "General Inquiries"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_description",
+      "label": "Description",
+      "default": "For questions or more information about ATAH, our collections, or any general inquiries:"
+    },
+    {
+      "type": "text",
+      "id": "card_1_email",
+      "label": "Email",
+      "default": "hello@atah.com"
+    },
+    {
+      "type": "header",
+      "content": "Contact card 2"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Partnerships"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_description",
+      "label": "Description",
+      "default": "Interested in collaborating or discussing partnerships with ATAH? Reach us here:"
+    },
+    {
+      "type": "text",
+      "id": "card_2_email",
+      "label": "Email",
+      "default": "partners@atah.com"
+    },
+    {
+      "type": "header",
+      "content": "Contact card 3"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Media & Press"
+    },
+    {
+      "type": "textarea",
+      "id": "card_3_description",
+      "label": "Description",
+      "default": "For press inquiries or media kits, please contact us:"
+    },
+    {
+      "type": "text",
+      "id": "card_3_email",
+      "label": "Email",
+      "default": "press@atah.com"
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "select",
+      "id": "card_alignment",
+      "label": "Card alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Card title size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "card_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Card text size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Card border width",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Privacy disclaimer"
+    },
+    {
+      "type": "textarea",
+      "id": "privacy_text",
+      "label": "Privacy text",
+      "default": "We respect your privacy. Any information shared with us will be treated with the utmost care and in accordance with our privacy policy. Your details will not be shared with third parties without your consent."
+    },
+    {
+      "type": "range",
+      "id": "privacy_text_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Privacy text size",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "privacy_alignment",
+      "label": "Privacy text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "email_color",
+      "label": "Email link",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border",
+      "default": "#e6e6e6"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact section"
+    }
+  ]
+}
+{% endschema %}

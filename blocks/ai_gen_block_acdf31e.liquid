@@ -1,0 +1,288 @@
+{% doc %}
+  @prompt
+    Create a simple anchor link scroll functionality that allows a button to smoothly scroll to a specific section at the bottom of the page. Include a customizable section ID field in the theme editor settings so the merchant can specify which section to scroll to. Add smooth scrolling behavior for better user experience.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-scroll-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: {{ block.settings.button_font_weight }};
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-scroll-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text_color }};
+    border-color: {{ block.settings.button_hover_border_color }};
+  }
+
+  .ai-scroll-button-icon-{{ ai_gen_id }} {
+    margin-left: 8px;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-scroll-button-{{ ai_gen_id }}:hover .ai-scroll-button-icon-{{ ai_gen_id }} {
+    transform: translateY(4px);
+  }
+{% endstyle %}
+
+<scroll-button-{{ ai_gen_id }} {{ block.shopify_attributes }}>
+  <button
+    class="ai-scroll-button-{{ ai_gen_id }}"
+    data-target-id="{{ block.settings.target_section_id }}"
+    aria-label="{{ block.settings.button_text }}"
+  >
+    {{ block.settings.button_text }}
+    {% if block.settings.show_icon %}
+      <svg
+        class="ai-scroll-button-icon-{{ ai_gen_id }}"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <polyline points="19 12 12 19 5 12"></polyline>
+      </svg>
+    {% endif %}
+  </button>
+</scroll-button-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ScrollButton{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.button = this.querySelector('.ai-scroll-button-{{ ai_gen_id }}');
+        this.targetId = this.button.getAttribute('data-target-id');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.button.addEventListener('click', () => {
+          this.scrollToTarget();
+        });
+      }
+
+      scrollToTarget() {
+        // Find the form section by looking for the artist form
+        let targetElement = null;
+        
+        // First, try to find by target section ID if provided
+        if (this.targetId) {
+          targetElement = document.getElementById(this.targetId);
+          
+          // Try Shopify section ID format
+          if (!targetElement) {
+            targetElement = document.getElementById('shopify-section-' + this.targetId);
+          }
+          
+          // Try finding by partial ID match
+          if (!targetElement) {
+            targetElement = document.querySelector('[id*="' + this.targetId + '"]');
+          }
+        }
+        
+        // If still not found, find the form section by its content
+        if (!targetElement) {
+          const formElement = document.querySelector('.ai-artist-form-aovvfbhfoy1frwxhywaigenblockd932283eeqggl');
+          if (formElement) {
+            // Find the parent shopify-section
+            targetElement = formElement.closest('.shopify-section') || formElement;
+          }
+        }
+        
+        // Fallback: find any section containing the form
+        if (!targetElement) {
+          const sections = document.querySelectorAll('.shopify-section');
+          for (let section of sections) {
+            if (section.querySelector('form[id="contact_form"]') || 
+                section.querySelector('.contact-form')) {
+              targetElement = section;
+              break;
+            }
+          }
+        }
+
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        } else {
+          console.warn('Target form section not found');
+        }
+      }
+    }
+
+    customElements.define('scroll-button-{{ ai_gen_id }}', ScrollButton{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Scroll to section button",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Button content"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Scroll down"
+    },
+    {
+      "type": "text",
+      "id": "target_section_id",
+      "label": "Target section ID",
+      "info": "Enter the ID of the section to scroll to (e.g., 'shopify-section-template--123456789--footer')"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show arrow icon",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Hover border",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "button_font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scroll to section button"
+    }
+  ]
+}
+{% endschema %}
